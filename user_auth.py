@@ -1,8 +1,9 @@
-from dbUtils import SCHEMA
+from configs import SCHEMA
 import uuid
 import bcrypt
 from utils import logger
 import datetime
+import json
 
 def user_signup_checks(cursor, username, email_add):
     cursor.execute("""
@@ -64,7 +65,7 @@ def get_user_watchlist(cursor, username):
     return query_res
 
 
-def user_signup_insert(connection, cursor, username, email_add, salt, pass_hash, session_token):
+def user_signup_insert(connection, cursor, username, email_add, salt, pass_hash, session_token, watchlist):
     cursor.execute("""
         INSERT INTO {}.user_acc_info (
             username,
@@ -84,6 +85,18 @@ def user_signup_insert(connection, cursor, username, email_add, salt, pass_hash,
         );
     """.format(SCHEMA), (username, pass_hash, salt, email_add, session_token))
     connection.commit()
+    cursor.execute("""
+        INSERT INTO {}.user_watch_list (
+            username,
+            watchlist
+        )
+        VALUES (
+            %s,
+            %s
+        );
+    """.format(SCHEMA), (username, watchlist))
+    connection.commit()
+
 
 def update_user_session_token(connection, cursor, session_token, userid):
     cursor.execute("""
@@ -114,9 +127,17 @@ def user_signup(request, cursor, connection):
         password_hash = bcrypt.hashpw(auth_dict["password"].encode('utf-8'), salt = bcrypt.gensalt())
         password_hash=password_hash.decode()
         session_token = str(uuid.uuid4())
-        user_signup_insert(connection, cursor, auth_dict["username"], auth_dict["email_add"], pass_salt, password_hash, session_token)
+        watchlist_id = str(uuid.uuid4())
+        default_watchlist = {
+            watchlist_id: {
+                "name": "Default",
+                "symbols": ["MSFT", "AMZN", "AAPL", "GOOG", "IBM"]
+            }
+        }
+        user_signup_insert(connection, cursor, auth_dict["username"], auth_dict["email_add"], pass_salt, password_hash, session_token, json.dumps(default_watchlist))
         auth_signup_res["msg"] = "User created!"
-        auth_signup_res["watchlists"] = {}
+        auth_signup_res["watchlists"] = default_watchlist
+        auth_signup_res["watchlist_id"] = watchlist_id
         auth_signup_res["session_token"] = session_token
         auth_signup_res["status"] = True
     except Exception as e:
@@ -142,7 +163,7 @@ def user_login(request, cursor, connection):
             update_user_session_token(connection, cursor, session_token, auth_dict['name'])
             auth_login_res["msg"] = "Login success"
             auth_login_res["session_token"] = session_token
-            auth_login_res["watchlists"] = get_user_watchlist(cursor, auth_dict['name'])
+            auth_login_res["watchlists"] = get_user_watchlist(cursor, auth_dict['name'])[0][0]
             auth_login_res["status"] = True
         else:
             auth_login_res["msg"] = "Login failed! Password incorrect!"
@@ -163,7 +184,7 @@ def validate_token(request, cursor, connection, token):
             return token_validate_res
         else:
             token_validate_res["msg"] = "Token valid"
-            token_validate_res["watchlists"] = get_user_watchlist(cursor, user_info[0][0])
+            token_validate_res["watchlists"] = get_user_watchlist(cursor, user_info[0][0])[0][0]
             token_validate_res["username"] = user_info[0][0]
             token_validate_res["status"] = True
     except Exception as e:

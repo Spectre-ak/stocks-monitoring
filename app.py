@@ -5,29 +5,25 @@ import uuid
 import json as jsonLoader
 import psycopg2
 # from flask_cors import CORS, cross_origin
-import dbUtils
+import configs
 import request_utils
 from utils import logger, get_auth_token
 from user_auth import user_signup, user_login, validate_token
+from watchlists_utils import create_watchlist
 
 app = Flask(__name__, static_url_path='', static_folder='static')
-conn = psycopg2.connect(database=dbUtils.DB_NAME,
-                        host=dbUtils.DB_HOST,
-                        user=dbUtils.DB_USER,
-                        password=dbUtils.DB_PASS,
-                        port=dbUtils.DB_PORT)
+conn = psycopg2.connect(database=configs.DB_NAME,
+                        host=configs.DB_HOST,
+                        user=configs.DB_USER,
+                        password=configs.DB_PASS,
+                        port=configs.DB_PORT)
 cursor = conn.cursor()
 # cors = CORS(app, resources={r"/api/*": {"origins": "*"}})
 
 
 @app.route("/")
-def helloworld():
+def route_dashboard():
   return app.send_static_file("index.html")
-
-# @app.route("/ch")
-# def ch():
-#   cursor.execute(f"SELECT * FROM {dbUtils.SCHEMA}.acquirer_data LIMIT 1")
-#   return cursor.fetchall()
 
 @app.route("/v1/stocks/<stock_name>", methods=["GET"])
 def route_fetch_stock_metrics(stock_name):
@@ -57,7 +53,7 @@ def route_validate_session_token():
 @app.route("/v1/watchlist/create", methods=["POST"])
 def route_create_watchlist():
   logger(request, f"Creating watchlist")
-  return validate_token(request, cursor, conn, get_auth_token(request.headers.get('Authorization')))
+  return create_watchlist(request, cursor, conn)
 
 if __name__ == "__main__":
   app.run(port=5000, debug=True)
