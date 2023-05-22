@@ -6,6 +6,13 @@ RUN npm install
 COPY ./app-ui /app
 RUN npm run build
 
+RUN apt-get update && apt-get install -y \
+    libglpk-dev \
+    libsodium-dev \
+    libpq-dev \
+    libv8-dev \
+    libmysqlclient-dev \
+    postgresql
 
 FROM python:3.6.7
 WORKDIR /app
