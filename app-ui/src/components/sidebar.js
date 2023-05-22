@@ -38,7 +38,7 @@ const DashboardPageHandler = (props) => {
 
   useEffect(() => {
     if(activeKey === '1') {
-      setPageContent(<Dashboard userInfo={props.userInfo}/>)
+      setPageContent(<Dashboard userInfo={props.userInfo} savedWatchlist={props.savedWatchlist}/>)
     } else if(activeKey === '2') {
       setPageContent(<Settings/>)
     } else if(activeKey === '3') {

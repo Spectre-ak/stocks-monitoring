@@ -17,7 +17,7 @@ import {
 } from 'rsuite';
 
 import React, { useState, useEffect, createContext, useContext } from 'react';
-import { AuthErrorMessage, AuthHandlerFooter, fetcherApi, TextField, updateUserSession } from './utils';
+import { AuthErrorMessage, AuthHandlerFooter, fetcherApi, TextField, updateSelectedWatchlist, updateUserSession } from './utils';
 
 const { StringType } = Schema.Types;
 const model = Schema.Model({
@@ -66,6 +66,7 @@ function SignupPage(props){
       console.log(response);
       if(response.status) {
         updateUserSession(response);
+        updateSelectedWatchlist(response.watchlist_id);
         window.location.reload();
       } else {
         setLoaderState("Sign Up");
