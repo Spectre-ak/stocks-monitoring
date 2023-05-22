@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Button, Container, useToaster, Content, Divider, FlexboxGrid, Header, Input, InputGroup, List, Loader, Message, Modal, Placeholder, SelectPicker } from "rsuite"
 import { AsyncStockSymbolsSearchComponent } from "./async-stock-symbols-picker";
-import { fetcherApi } from "./utils";
+import { fetcherApi, updateSelectedWatchlist } from "./utils";
 
 
 const AddWatchListCheckMsg = (props) => {
@@ -30,9 +30,17 @@ const AddWatchListModal = (props) => {
     fetcherApi(
       '/v1/watchlist/create',
       'POST',
-      {}
+      {
+        selectedSymbols: selectedSymbols,
+        wathclistName: wathclistName,
+        username: props.userInfo.username
+      }
     ).then(response => {
-      console.log(response.status);
+        console.log(response);
+        if(response.status) {
+            updateSelectedWatchlist(response.watchlist_id)
+            window.location.reload();
+        }
     }).catch(error => {
       console.error(error);
       setSaveChangesButtonState("Save Changes");
@@ -137,7 +145,14 @@ const StocksWatchlistItem = (props) => {
     fetchMetrics();
   }, []);
 
-  
+  useEffect(() => {
+    const interval = setInterval(() => {
+      console.log("updating metrics for ", props.stockName);
+      fetchMetrics();
+    }, 70000);
+    return () => clearInterval(interval);
+  }, []);
+
   const setErrValsMetrics = () => {
     stockInfo.open = "--";
     stockInfo.high = "--";
@@ -196,12 +211,11 @@ const StocksWatchlistComponent = (props) => {
 
 
 const Dashboard = (props) => {
-  const [watchlistSelect, setWatchlistSelect] = useState(Object.keys(props.userInfo.watchlists)[0]);
+  const [watchlistSelect, setWatchlistSelect] = useState(props.savedWatchlist);
   const [openAddWatchlist, setOpenAddWatchlist] = useState(false);
   const [openEditWatchlist, setOpenEditWatchlist] = useState(false);
   const [editBtnDisabled, setEditBtnDisabled] = useState(false);
   const [userStockSymbolsView, setUserStockSymbolsView] = useState();
-  // <PageCenterLoader info="Loading stocks..."/>
   useEffect(() => {
     console.log(watchlistSelect);
     if(watchlistSelect === null || watchlistSelect === undefined){
@@ -224,6 +238,7 @@ const Dashboard = (props) => {
         <StocksWatchlistComponent symbols={props.userInfo.watchlists[watchlistSelect].symbols} key={Date.now()}/>
       )
     }
+    updateSelectedWatchlist(watchlistSelect);
   }, [watchlistSelect]);
 
   const addWatchList = () => {
@@ -261,8 +276,8 @@ const Dashboard = (props) => {
           <Button appearance="primary" style={{marginLeft: "10px"}} onClick={addWatchList}>Add watchlist</Button>
         </div>
       </b>
-      <AddWatchListModal open={openAddWatchlist} setOpen={setOpenAddWatchlist}/>
-      <EditWatchListModal open={openEditWatchlist} setOpen={setOpenEditWatchlist}/>
+      <AddWatchListModal open={openAddWatchlist} setOpen={setOpenAddWatchlist} userInfo={props.userInfo}/>
+      <EditWatchListModal open={openEditWatchlist} setOpen={setOpenEditWatchlist} userInfo={props.userInfo}/>
       <Divider/>
       <Content>
         {userStockSymbolsView}
