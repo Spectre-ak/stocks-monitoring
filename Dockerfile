@@ -11,7 +11,7 @@ RUN apt-get update && apt-get install -y \
     libsodium-dev \
     libpq-dev \
     libv8-dev \
-    libmysqlclient-dev \
+    default-libmysqlclient-dev \
     postgresql
 
 FROM python:3.6.7
