@@ -50,6 +50,10 @@ const fetcherApi = async (
   const headers = {
     Authorization: `Bearer ${localStorage.getItem("auth_token")}`
   }
+  if(method==='POST'){
+    headers['Content-Type'] = 'application/json';
+  }
+
   const response = await fetch(url, {
     method: method,
     body: method==='GET' ? null : JSON.stringify(body),
@@ -61,8 +65,19 @@ const fetcherApi = async (
 
 
 const updateUserSession = (login_info) => {
-  localStorage.setItem("auth_token", login_info.auth_token);
-  localStorage.setItem("auth_token_expiry", login_info.auth_token_expiry);
+  localStorage.setItem("auth_token", login_info.session_token);
 };
 
-export {TextField, AuthHandlerFooter, fetcherApi, updateUserSession};
+const updateSelectedWatchlist = (watchlist_id) => {
+  localStorage.setItem("saved_watchlist", watchlist_id);
+};
+
+const AuthErrorMessage = (props) => {
+  return(
+    <Message closable type="error">
+      {props.msg}
+    </Message> 
+  )
+};
+
+export {TextField, AuthHandlerFooter, fetcherApi, updateUserSession, AuthErrorMessage, updateSelectedWatchlist};
