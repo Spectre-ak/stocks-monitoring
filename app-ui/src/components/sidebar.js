@@ -4,6 +4,8 @@ import DashboardIcon from '@rsuite/icons/legacy/Dashboard';
 import GearCircleIcon from '@rsuite/icons/legacy/GearCircle';
 import { Sidenav, Nav, Sidebar, Container, Content } from 'rsuite';
 import React, { useEffect } from "react";
+import ExitIcon from '@rsuite/icons/Exit';
+import { deleteUserSession } from "./utils";
 
 const DashboardSidebar = ({ appearance, expanded, onExpand, ...navProps }) => {
   return (
@@ -18,6 +20,9 @@ const DashboardSidebar = ({ appearance, expanded, onExpand, ...navProps }) => {
           </Nav.Item>
           <Nav.Item eventKey="2" icon={<GearCircleIcon />}>
             Settings
+          </Nav.Item>
+          <Nav.Item eventKey="3" icon={<ExitIcon />}>
+            Logout
           </Nav.Item>
         </Nav>
       </Sidenav.Body>
@@ -36,6 +41,9 @@ const DashboardPageHandler = (props) => {
       setPageContent(<Dashboard userInfo={props.userInfo}/>)
     } else if(activeKey === '2') {
       setPageContent(<Settings/>)
+    } else if(activeKey === '3') {
+      deleteUserSession();
+      window.location.reload();
     }
   }, [activeKey])
 

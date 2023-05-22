@@ -72,6 +72,11 @@ const updateSelectedWatchlist = (watchlist_id) => {
   localStorage.setItem("saved_watchlist", watchlist_id);
 };
 
+const deleteUserSession = () => {
+  localStorage.removeItem("auth_token");
+  localStorage.removeItem("saved_watchlist");
+};
+
 const AuthErrorMessage = (props) => {
   return(
     <Message closable type="error">
@@ -80,4 +85,4 @@ const AuthErrorMessage = (props) => {
   )
 };
 
-export {TextField, AuthHandlerFooter, fetcherApi, updateUserSession, AuthErrorMessage, updateSelectedWatchlist};
+export {TextField, AuthHandlerFooter, fetcherApi, updateUserSession, AuthErrorMessage, updateSelectedWatchlist, deleteUserSession};
