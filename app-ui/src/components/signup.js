@@ -17,7 +17,7 @@ import {
 } from 'rsuite';
 
 import React, { useState, useEffect, createContext, useContext } from 'react';
-import { AuthHandlerFooter, fetcherApi, TextField } from './utils';
+import { AuthErrorMessage, AuthHandlerFooter, fetcherApi, TextField, updateUserSession } from './utils';
 
 const { StringType } = Schema.Types;
 const model = Schema.Model({
@@ -64,7 +64,18 @@ function SignupPage(props){
       formValue
     ).then(response => {
       console.log(response);
-      setLoaderState("Sign Up");
+      if(response.status) {
+        updateUserSession(response);
+        window.location.reload();
+      } else {
+        setLoaderState("Sign Up");
+        toaster.push(
+          <Message closable type="error">
+            {response.msg}
+          </Message>, 
+          { placement: "topCenter", duration: 30000 }
+        );
+      }
     }).catch(error => {
       console.error(error);
       setLoaderState("Sign Up");

@@ -15,7 +15,7 @@ import {
   useToaster
 } from 'rsuite';
 import React, { useState, useEffect, createContext, useContext } from 'react';
-import { AuthHandlerFooter, fetcherApi, TextField } from './utils';
+import { AuthErrorMessage, AuthHandlerFooter, fetcherApi, TextField, updateUserSession } from './utils';
 
 
 const { StringType } = Schema.Types;
@@ -44,15 +44,26 @@ function LoginPage(props){
       'POST',
       formValue
     ).then(response => {
-      console.log(response.status);
-      setLoaderState("Log in");
+      console.log(response);
+      if(response.status){
+        updateUserSession(response);
+        window.location.reload();
+      } else {
+        setLoaderState("Log in");
+        toaster.push(
+          <Message closable type="error">
+            {response.msg}
+          </Message>, 
+          { placement: "topCenter", duration: 30000 }
+        );
+      }
     }).catch(error => {
       console.error(error);
       setLoaderState("Log in");
       toaster.push(
         <Message closable type="error">
           Something went wrong, unable to sign in
-        </Message>, 
+        </Message>,
         { placement: "topCenter", duration: 30000 }
       );
     });
