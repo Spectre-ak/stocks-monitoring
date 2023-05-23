@@ -14,7 +14,7 @@ def req_auth(request, cursor, connection):
   res.status_code = 401
   try:
     path = request.path
-    if path in ["/v1/auth/login", "/v1/auth/validate/token", "/v1/auth/signup"]:
+    if path not in ["/v1/watchlist/create", "/v1/watchlist/update"]:
       return {
         "res": res,
         "status": True
