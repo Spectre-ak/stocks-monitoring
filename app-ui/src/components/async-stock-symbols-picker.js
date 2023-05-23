@@ -10,11 +10,6 @@ const useStockSymbols = (defaultSymbols = []) => {
     setLoading(true);
     fetcherApi(`/v1/stocks/search/${word}`, 'GET', {})
       .then(data => {
-        console.log(data.bestMatches.map(i => ({
-          "label": `${i['1. symbol']}, ${i['2. name']}`,
-          "symbol": i['1. symbol']
-        })));
-        console.log(defaultSymbols);
         setStocks(data.bestMatches.map(i => ({
           "label": `${i['1. symbol']}, ${i['2. name']}`,
           "symbol": i['1. symbol']
@@ -33,23 +28,20 @@ const AsyncStockSymbolsSearchComponent = (props) => {
   const [value, setValue] = React.useState(props.defaultSelectedSymbols === undefined ? [] : props.defaultSelectedSymbols.map(e => (e.symbol)));
   const [cacheData, setCacheData] = React.useState(props.defaultSelectedSymbols === undefined ? [] : props.defaultSelectedSymbols);
   const [searchText, setSearchText] = React.useState("");
-  
+
 
   const handleSelect = (value, item, event) => {
     setCacheData([...cacheData, item]);
   };
 
   useEffect(() => {
-    if(searchText === "")
+    if (searchText === "")
       return;
     const searchWaitTimeoutId = setTimeout(() => fetchSymbols(searchText), 1500);
     return () => clearTimeout(searchWaitTimeoutId);
   }, [searchText]);
 
   useEffect(() => {
-    console.log("selected sy,bols ", value);
-    console.log("stock symbols ", stockSymbols);
-
     props.setSelectedSymbols(value);
   }, [value])
 
@@ -81,4 +73,4 @@ const AsyncStockSymbolsSearchComponent = (props) => {
 };
 
 
-export {AsyncStockSymbolsSearchComponent};
+export { AsyncStockSymbolsSearchComponent };

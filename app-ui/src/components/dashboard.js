@@ -22,7 +22,6 @@ const ManageWatchlistModal = (props) => {
     const [defaultSelectedSymbols, setDefaultSelectedSymbols] = useState(props.editWatchlist ? props.userInfo.watchlists[props.watchlistSelect].symbols.map(e => ({ label: e, symbol: e })) : undefined);
 
     const handleSaveWatchlist = () => {
-        console.log(wathclistName, selectedSymbols);
         if (wathclistName === "") {
             setSaveWatchListCheckMsg(
                 <AddWatchListCheckMsg type="error" header="Error" info="Please add a watchlist name" setMsgOnClose={setSaveWatchListCheckMsg} />
@@ -40,13 +39,11 @@ const ManageWatchlistModal = (props) => {
                 watchlistId: props.editWatchlist ? props.watchlistSelect : ""
             }
         ).then(response => {
-            console.log(response);
             if (response.status) {
                 updateSelectedWatchlist(response.watchlist_id)
                 window.location.reload();
             }
         }).catch(error => {
-            console.error(error);
             setSaveChangesButtonState(props.editWatchlist ? "Update Watchlist" : "Create Watchlist");
             setSaveWatchListCheckMsg(
                 <AddWatchListCheckMsg type="error" header="Error" info={error.toString() === "Error: UNAUTHORIZED" ? "Session over, please login again" : "Something went wrong, unable to save watchlist"} setMsgOnClose={setSaveWatchListCheckMsg} />
@@ -100,7 +97,6 @@ const StocksWatchlistItem = (props) => {
             'GET',
             {}
         ).then(response => {
-            console.log(response);
             response = response["Global Quote"];
             setStockInfo({
                 open: response["02. open"],
@@ -112,19 +108,17 @@ const StocksWatchlistItem = (props) => {
             })
             setStockInfoLoader();
         }).catch(error => {
-            console.error(error);
-            console.log(error.toString());
-            if(error.toString() === "Error: UNAUTHORIZED") toaster.push(<Message closable>Session over, please login again</Message>, {duration: 5000});
-            else 
-            toaster.push(
-                <Message closable type="error">
-                    API rate limit exceeded! Please try again after some time.
-                </Message>,
-                { placement: "topCenter", duration: 10000 }
-            );
+            // if (error.toString() === "Error: UNAUTHORIZED") toaster.push(<Message closable>Session over, please login again</Message>, { duration: 5000 });
+            // else
+                toaster.push(
+                    <Message closable type="error">
+                        API rate limit exceeded! Please try again after some time.
+                    </Message>,
+                    { placement: "topCenter", duration: 10000 }
+                );
             setStockInfoLoader();
             setErrValsMetrics();
-            
+
         });
     };
     useEffect(() => {
@@ -133,7 +127,6 @@ const StocksWatchlistItem = (props) => {
 
     useEffect(() => {
         const interval = setInterval(() => {
-            console.log("updating metrics for ", props.stockName);
             fetchMetrics();
         }, 70000);
         return () => clearInterval(interval);
@@ -168,7 +161,6 @@ const StocksWatchlistItem = (props) => {
 const StocksWatchlistComponent = (props) => {
     const [stocksList, setStockList] = useState([]);
     useEffect(() => {
-        console.log("StocksWatchlistComponent ", props.symbols);
         const symbolsList = props.symbols.map((stockName) => <StocksWatchlistItem key={stockName} stockName={stockName} />);
         setStockList(symbolsList);
     }, []);
@@ -205,7 +197,6 @@ const Dashboard = (props) => {
     const [watchlistManageModal, launchWatchlistManageModal] = useState();
 
     useEffect(() => {
-        console.log(watchlistSelect);
         if (watchlistSelect === null || watchlistSelect === undefined) {
             setEditBtnDisabled(true);
             return;
@@ -213,15 +204,11 @@ const Dashboard = (props) => {
         else
             setEditBtnDisabled(false);
 
-        console.log(watchlistSelect);
-        console.log("sdfsdfsdfs");
         if (props.userInfo.watchlists[watchlistSelect].symbols.length === 0) {
             setUserStockSymbolsView(
                 <AddWatchListCheckMsg style={{ marginTop: "10px" }} type="info" header="No stocks found in this watchlist" info="" setMsgOnClose={setUserStockSymbolsView} />
             );
         } else {
-            console.log(props.userInfo.watchlists[watchlistSelect].symbols);
-            console.log("selected symbol");
             setUserStockSymbolsView(
                 <StocksWatchlistComponent symbols={props.userInfo.watchlists[watchlistSelect].symbols} key={Date.now()} />
             )
@@ -231,20 +218,17 @@ const Dashboard = (props) => {
 
 
     const editWatchlistClick = () => {
-        console.log('clicked edit');
         setOpenWatchlistManageModal(true);
         launchWatchlistManageModal(<ManageWatchlistModal open={true} setOpen={setOpenWatchlistManageModal} userInfo={props.userInfo} watchlistSelect={watchlistSelect} editWatchlist={true} />);
     };
 
     const addNewWatchlistClick = () => {
-        console.log('clicked add');
         setOpenWatchlistManageModal(true);
         launchWatchlistManageModal(<ManageWatchlistModal open={true} setOpen={setOpenWatchlistManageModal} userInfo={props.userInfo} watchlistSelect={watchlistSelect} editWatchlist={false} />);
     };
 
     useEffect(() => {
         if (!openWatchlistManageModal) {
-            console.log('closed modal');
             launchWatchlistManageModal("");
         }
     }, [openWatchlistManageModal]);

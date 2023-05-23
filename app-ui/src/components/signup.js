@@ -27,7 +27,7 @@ const model = Schema.Model({
     .isRequired('This field is required.'),
   password: StringType().isRequired('This field is required.')
     .addRule((value) => {
-      if(value.length < 5)
+      if (value.length < 5)
         return false;
       return true;
     }, 'Password must be at least 5 character long'),
@@ -42,7 +42,7 @@ const model = Schema.Model({
 });
 
 
-function SignupPage(props){
+function SignupPage(props) {
   const formRef = React.useRef();
   const [formValue, setFormValue] = React.useState({
     username: '',
@@ -63,8 +63,7 @@ function SignupPage(props){
       'POST',
       formValue
     ).then(response => {
-      console.log(response);
-      if(response.status) {
+      if (response.status) {
         updateUserSession(response);
         updateSelectedWatchlist(response.watchlist_id);
         window.location.reload();
@@ -73,7 +72,7 @@ function SignupPage(props){
         toaster.push(
           <Message closable type="error">
             {response.msg}
-          </Message>, 
+          </Message>,
           { placement: "topCenter", duration: 30000 }
         );
       }
@@ -83,14 +82,14 @@ function SignupPage(props){
       toaster.push(
         <Message closable type="error">
           Something went wrong, unable to sign up
-        </Message>, 
+        </Message>,
         { placement: "topCenter", duration: 30000 }
       );
     });
   };
 
 
-  return(
+  return (
     <Panel header={<h3>Create Account</h3>} bordered>
       <Form
         fluid
@@ -103,8 +102,8 @@ function SignupPage(props){
       >
         <TextField name="username" label="Username" />
         <TextField name="email_add" label="Email address" type="email" />
-        <TextField name="password" label="Password" type="password" autoComplete="off"/>
-        <TextField name="password_cnf" label="Confirm Password" type="password" autoComplete="off"/>
+        <TextField name="password" label="Password" type="password" autoComplete="off" />
+        <TextField name="password_cnf" label="Confirm Password" type="password" autoComplete="off" />
         <AuthHandlerFooter
           button_name={loaderState}
           setLoginPage={false}

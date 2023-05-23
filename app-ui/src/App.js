@@ -20,7 +20,7 @@ import {
   Loader
 } from 'rsuite';
 import SignupPage from './components/signup';
-import { fetcherApi } from './components/utils';
+import { deleteUserSession, fetcherApi } from './components/utils';
 import { DashboardPageHandler } from './components/sidebar';
 
 
@@ -29,7 +29,7 @@ const DashboardAuthPage = () => {
   const [authPage, setAuthPage] = useState('');
   const toaster = useToaster();
   useEffect(() => {
-    setAuthPage(isSignUpPage ? <SignupPage setAuthPageState={setAuthPageState}/> : <LoginPage setAuthPageState={setAuthPageState}/>);
+    setAuthPage(isSignUpPage ? <SignupPage setAuthPageState={setAuthPageState} /> : <LoginPage setAuthPageState={setAuthPageState} />);
   }, [isSignUpPage]);
   return (
     <div className={isSignUpPage ? "auth_signup_page" : "auth_login_page"}>
@@ -42,13 +42,13 @@ const DashboardAuthPage = () => {
           </Navbar>
         </Header>
         <div>
-        <Content>
-          <FlexboxGrid justify="center">
-            <FlexboxGrid.Item colspan={8}>
+          <Content>
+            <FlexboxGrid justify="center">
+              <FlexboxGrid.Item colspan={8}>
                 {authPage}
               </FlexboxGrid.Item>
-          </FlexboxGrid>
-        </Content>
+            </FlexboxGrid>
+          </Content>
         </div>
       </Container>
     </div>
@@ -56,10 +56,10 @@ const DashboardAuthPage = () => {
 }
 
 const PageCenterLoader = (props) => {
-  return(
+  return (
     <div>
       <Placeholder.Paragraph rows={10} />
-      <Loader backdrop content={props.info} vertical size="md"/>
+      <Loader backdrop content={props.info} vertical size="md" />
     </div>
   )
 }
@@ -67,24 +67,24 @@ const PageCenterLoader = (props) => {
 
 
 const DashboardEntry = () => {
-  const [dashboardPage, setDashboardPage] = useState(<PageCenterLoader info="Loading stock monitoring portal..."/>);
+  const [dashboardPage, setDashboardPage] = useState(<PageCenterLoader info="Loading stock monitoring portal..." />);
   useEffect(() => {
     fetcherApi(
       '/v1/auth/validate/token',
       'GET',
       {}
     ).then(response => {
-      console.log('validate token respnse');
-      console.log(response);
-      if(response.status) {
+      if (response.status) {
         const savedWatchlist = localStorage.getItem("saved_watchlist") === null ? Object.keys(response.watchlists)[0] : localStorage.getItem("saved_watchlist");
-        console.log(savedWatchlist);
-        setDashboardPage(<DashboardPageHandler userInfo={response} savedWatchlist={savedWatchlist}/>);
-      } else
-        setDashboardPage(<DashboardAuthPage/>);
+        setDashboardPage(<DashboardPageHandler userInfo={response} savedWatchlist={savedWatchlist} />);
+      } else {
+        deleteUserSession();
+        setDashboardPage(<DashboardAuthPage />);
+        // add a way to kill the app after some time of inactivity
+      }
     }).catch(error => {
       console.error(error);
-      setDashboardPage(<DashboardAuthPage/>);
+      setDashboardPage(<DashboardAuthPage />);
     });
   }, []);
 
@@ -95,4 +95,4 @@ const DashboardEntry = () => {
   );
 }
 
-export {DashboardAuthPage, DashboardEntry, PageCenterLoader};
+export { DashboardAuthPage, DashboardEntry, PageCenterLoader };

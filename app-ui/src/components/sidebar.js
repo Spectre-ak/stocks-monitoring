@@ -6,6 +6,7 @@ import { Sidenav, Nav, Sidebar, Container, Content } from 'rsuite';
 import React, { useEffect } from "react";
 import ExitIcon from '@rsuite/icons/Exit';
 import { deleteUserSession } from "./utils";
+import NavbarBrand from "rsuite/esm/Navbar/NavbarBrand";
 
 const DashboardSidebar = ({ appearance, expanded, onExpand, ...navProps }) => {
   return (
@@ -37,11 +38,11 @@ const DashboardPageHandler = (props) => {
   const [pageContent, setPageContent] = React.useState('');
 
   useEffect(() => {
-    if(activeKey === '1') {
-      setPageContent(<Dashboard userInfo={props.userInfo} savedWatchlist={props.savedWatchlist}/>)
-    } else if(activeKey === '2') {
-      setPageContent(<Settings/>)
-    } else if(activeKey === '3') {
+    if (activeKey === '1') {
+      setPageContent(<Dashboard userInfo={props.userInfo} savedWatchlist={props.savedWatchlist} />)
+    } else if (activeKey === '2') {
+      setPageContent(<Settings />)
+    } else if (activeKey === '3') {
       deleteUserSession();
       window.location.reload();
     }
@@ -51,6 +52,7 @@ const DashboardPageHandler = (props) => {
     <>
       <Container>
         <Sidebar width={expanded ? 260 : 56}>
+
           <DashboardSidebar
             activeKey={activeKey}
             onSelect={setActiveKey}
@@ -59,7 +61,7 @@ const DashboardPageHandler = (props) => {
             appearance="subtle"
           />
         </Sidebar>
-        
+
         <Container className="page-container">
           <Content>
             {pageContent}
@@ -70,4 +72,4 @@ const DashboardPageHandler = (props) => {
   );
 };
 
-export {DashboardSidebar, DashboardPageHandler};
+export { DashboardSidebar, DashboardPageHandler };

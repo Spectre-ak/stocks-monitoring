@@ -25,7 +25,7 @@ const TextField = (props) => {
 }
 
 const AuthHandlerFooter = (props) => {
-  return(
+  return (
     <Form.Group>
       <ButtonToolbar>
         <Button appearance="primary" type="submit">{props.button_name}</Button>
@@ -50,18 +50,16 @@ const fetcherApi = async (
   const headers = {
     Authorization: `Bearer ${localStorage.getItem("auth_token")}`
   }
-  if(method==='POST'){
+  if (method === 'POST') {
     headers['Content-Type'] = 'application/json';
   }
 
   const response = await fetch(url, {
     method: method,
-    body: method==='GET' ? null : JSON.stringify(body),
+    body: method === 'GET' ? null : JSON.stringify(body),
     headers: headers
   });
-  console.log(response);
-  console.log(response.status);
-  if(response.status === 401) {
+  if (response.status === 401) {
     throw new Error('UNAUTHORIZED');
   }
   const response_parsed = await response.json()
@@ -69,7 +67,6 @@ const fetcherApi = async (
 };
 
 const checkUserSessionOver = (e, toaster) => {
-  console.log(e);
 };
 
 const updateUserSession = (login_info) => {
@@ -86,11 +83,11 @@ const deleteUserSession = () => {
 };
 
 const AuthErrorMessage = (props) => {
-  return(
+  return (
     <Message closable type="error">
       {props.msg}
-    </Message> 
+    </Message>
   )
 };
 
-export {TextField, AuthHandlerFooter, fetcherApi, updateUserSession, AuthErrorMessage, updateSelectedWatchlist, deleteUserSession, checkUserSessionOver};
+export { TextField, AuthHandlerFooter, fetcherApi, updateUserSession, AuthErrorMessage, updateSelectedWatchlist, deleteUserSession, checkUserSessionOver };

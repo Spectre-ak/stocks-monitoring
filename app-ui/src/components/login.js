@@ -25,7 +25,7 @@ const model = Schema.Model({
 });
 
 
-function LoginPage(props){ 
+function LoginPage(props) {
   const formRef = React.useRef();
   const [formValue, setFormValue] = React.useState({
     name: '',
@@ -44,8 +44,7 @@ function LoginPage(props){
       'POST',
       formValue
     ).then(response => {
-      console.log(response);
-      if(response.status){
+      if (response.status) {
         updateUserSession(response);
         window.location.reload();
       } else {
@@ -53,12 +52,11 @@ function LoginPage(props){
         toaster.push(
           <Message closable type="error">
             {response.msg}
-          </Message>, 
+          </Message>,
           { placement: "topCenter", duration: 30000 }
         );
       }
     }).catch(error => {
-      console.error(error);
       setLoaderState("Log in");
       toaster.push(
         <Message closable type="error">
@@ -69,9 +67,9 @@ function LoginPage(props){
     });
   };
 
-  return(
+  return (
     <Panel header={<h3>Please login to proceed</h3>} bordered>
-      <Form 
+      <Form
         fluid
         model={model}
         onSubmit={handleSubmit}
