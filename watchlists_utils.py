@@ -60,3 +60,26 @@ def create_watchlist(request, cursor, conn):
 
 
 
+def update_watchlist(request, cursor, conn):
+    watchlist_update_res = {
+        "status": False,
+        "msg": ""
+    }
+    try:
+        watchlist_dict = request.get_json()
+        check_res = create_watchlist_checks(watchlist_dict)
+        if "watchlistId" not in watchlist_dict.keys():
+            check_res["msg"] = f'{check_res["msg"]},Watchlist id is not present!'
+            check_res["status"] = False
+        if check_res["status"] is False:
+            return check_res 
+        watchlist_id = watchlist_dict["watchlistId"]
+        user_watchlist_update(conn, cursor, f"{{{watchlist_id}}}", json.dumps({"name": watchlist_dict["wathclistName"], "symbols": watchlist_dict["selectedSymbols"]}), watchlist_dict["username"])
+        watchlist_update_res["status"] = True
+        watchlist_update_res["msg"] = "Watchlist updated!"
+        watchlist_update_res["watchlist_id"] = watchlist_id
+    except Exception as e:
+        logger(request, f"Watchlist update error: {e}")
+        watchlist_update_res["msg"] = "Something went wront, unable to update watchlist!"
+    return watchlist_update_res
+

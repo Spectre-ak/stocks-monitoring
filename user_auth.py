@@ -36,7 +36,7 @@ def get_user_hashed_pass(cursor, userid):
     query_res = cursor.fetchall()
     return query_res
 
-def get_username(cursor, session_token):
+def get_username(cursor, session_token, connection):
     cursor.execute("""
         SELECT
             username,
@@ -46,6 +46,7 @@ def get_username(cursor, session_token):
         WHERE
             user_session_token = %s;
     """.format(SCHEMA), (session_token,))
+    connection.commit()
     query_res = cursor.fetchall()
     if datetime.datetime.now() > query_res[0][1]:
         return []
@@ -178,7 +179,7 @@ def validate_token(request, cursor, connection, token):
             "msg": "",
             "status": False
         }
-        user_info = get_username(cursor, token)
+        user_info = get_username(cursor, token, connection)
         if len(user_info) != 1:
             token_validate_res["msg"] = "Token invalid"
             return token_validate_res
