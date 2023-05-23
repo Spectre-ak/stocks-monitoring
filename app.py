@@ -57,9 +57,9 @@ def route_create_watchlist():
 
 if __name__ == "__main__":
   if configs.ENV == "LOCAL":
-    app.run(port=5000, debug=True)
+    app.run(host='0.0.0.0', port=5000, debug=True)
   elif configs.ENV == "UAT":
-    app.run(port=5000)
+    app.run(host='0.0.0.0', port=5000)
   else:
     logger("Unidentified env variable. Cannot start server.")
 
