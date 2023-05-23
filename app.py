@@ -1,5 +1,3 @@
-import local_setup
-
 
 from flask import Flask, app, request, redirect, url_for, make_response
 import json as jsonLoader
