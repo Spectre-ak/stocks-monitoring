@@ -1,16 +1,21 @@
 import React, { useEffect, useState } from "react";
-import { TagPicker } from 'rsuite';
+import { TagPicker, useToaster } from 'rsuite';
 import SpinnerIcon from '@rsuite/icons/legacy/Spinner';
+import { fetcherApi } from "./utils";
 
 const useStockSymbols = (defaultSymbols = []) => {
-  const [stockSymbols, setUsers] = useState(defaultSymbols);
+  const [stockSymbols, setStocks] = useState(defaultSymbols);
   const [loading, setLoading] = useState(false);
   const fetchSymbols = word => {
     setLoading(true);
-    fetch(`/v1/stocks/search/${word}`)
-      .then(response => response.json())
+    fetcherApi(`/v1/stocks/search/${word}`, 'GET', {})
       .then(data => {
-        setUsers(data.bestMatches.map(i => ({
+        console.log(data.bestMatches.map(i => ({
+          "label": `${i['1. symbol']}, ${i['2. name']}`,
+          "symbol": i['1. symbol']
+        })));
+        console.log(defaultSymbols);
+        setStocks(data.bestMatches.map(i => ({
           "label": `${i['1. symbol']}, ${i['2. name']}`,
           "symbol": i['1. symbol']
         })));
@@ -24,9 +29,9 @@ const useStockSymbols = (defaultSymbols = []) => {
 
 
 const AsyncStockSymbolsSearchComponent = (props) => {
-  const [stockSymbols, loading, fetchSymbols] = useStockSymbols();
-  const [value, setValue] = React.useState([]);
-  const [cacheData, setCacheData] = React.useState([]);
+  const [stockSymbols, loading, fetchSymbols] = useStockSymbols(props.defaultSelectedSymbols === undefined ? [] : props.defaultSelectedSymbols);
+  const [value, setValue] = React.useState(props.defaultSelectedSymbols === undefined ? [] : props.defaultSelectedSymbols.map(e => (e.symbol)));
+  const [cacheData, setCacheData] = React.useState(props.defaultSelectedSymbols === undefined ? [] : props.defaultSelectedSymbols);
   const [searchText, setSearchText] = React.useState("");
   
 
@@ -42,6 +47,9 @@ const AsyncStockSymbolsSearchComponent = (props) => {
   }, [searchText]);
 
   useEffect(() => {
+    console.log("selected sy,bols ", value);
+    console.log("stock symbols ", stockSymbols);
+
     props.setSelectedSymbols(value);
   }, [value])
 

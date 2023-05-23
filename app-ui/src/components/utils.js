@@ -59,10 +59,18 @@ const fetcherApi = async (
     body: method==='GET' ? null : JSON.stringify(body),
     headers: headers
   });
+  console.log(response);
+  console.log(response.status);
+  if(response.status === 401) {
+    throw new Error('UNAUTHORIZED');
+  }
   const response_parsed = await response.json()
   return response_parsed;
 };
 
+const checkUserSessionOver = (e, toaster) => {
+  console.log(e);
+};
 
 const updateUserSession = (login_info) => {
   localStorage.setItem("auth_token", login_info.session_token);
@@ -85,4 +93,4 @@ const AuthErrorMessage = (props) => {
   )
 };
 
-export {TextField, AuthHandlerFooter, fetcherApi, updateUserSession, AuthErrorMessage, updateSelectedWatchlist, deleteUserSession};
+export {TextField, AuthHandlerFooter, fetcherApi, updateUserSession, AuthErrorMessage, updateSelectedWatchlist, deleteUserSession, checkUserSessionOver};
