@@ -14,7 +14,7 @@ Utilities, requires Authorization token in headers
 | Route  |  Type | Function |
 | ------------- | ------------- | ------------- | 
 | /v1/stocks/<stock_name> | GET | Get stock details, using alphavantage's [latestprice](https://www.alphavantage.co/documentation/#latestprice)  |
-| /v1/stocks/search/keywords> | GET | Get stock symbols, using alphavantage's using [symbolsearch](https://www.alphavantage.co/documentation/#symbolsearch)  |
+| /v1/stocks/search/keywords> | GET | Get stock symbols, using alphavantage's [symbolsearch](https://www.alphavantage.co/documentation/#symbolsearch)  |
 | /v1/watchlist/create | POST | Create watchlist  |
 | /v1/watchlist/update  | POST | Update user's watchlist  |
   
@@ -44,10 +44,16 @@ Get alpha vantage api key from [here](https://www.alphavantage.co/support/#api-k
 avl_api_key_1 = <api_key>
 avl_api_key_2 = <api_key> # if you have multiple keys
 ```
-Proxy api keys, since alphavantage has limits(5 calls/min, 500/day) on requests made, use proxy to overcome it with multiple keys. Get proxy key from [scrapestack.com](scrapestack.com), and store api keys like this
+Proxy api keys, since alphavantage has limits(5 calls/min, 500/day) on requests made, use proxy to overcome it with multiple keys. Get proxy key from [scrapestack.com](http://scrapestack.com), and store api keys like this
 
 ```
 pxy_api_key_1 = <proxy_api_key>
 ```
 And finally store, the no of your alphavantage, scrapestack keys in `avl_keys_count`, `pxy_keys_count`.
+
+Dashboard home page:
+![hm2](https://github.com/Spectre-ak/stocks-monitoring/assets/62694340/755328ab-43e8-469c-ae77-5c7d3b86ca2f)
+
+Add/Edit watchlist
+![edit](https://github.com/Spectre-ak/stocks-monitoring/assets/62694340/8b2a1c91-22af-403a-a977-11b5a3ed6ccc)
 
